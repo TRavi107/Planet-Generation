@@ -35,7 +35,7 @@ public class TerrainFace
                 int i = x + y * resolution;
                 Vector2 percent = new Vector2(x, y) / (resolution - 1);
                 Vector3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
-                Vector3 pointOnUnitSphere = pointOnUnitCube.normalized;
+                Vector3 pointOnUnitSphere = PointOnSphere( pointOnUnitCube);
                 vertices[i] = shapeGenerator.CalculatePointOnPlanet(pointOnUnitSphere);
 
                 if (x != resolution - 1 && y != resolution - 1)
@@ -55,5 +55,16 @@ public class TerrainFace
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
+    }
+
+    Vector3 PointOnSphere(Vector3 pointOnCube)
+    {
+        float x2 = pointOnCube.x * pointOnCube.x;
+        float y2 = pointOnCube.y * pointOnCube.y;
+        float z2 = pointOnCube.z * pointOnCube.z;
+        float x = pointOnCube.x * Mathf.Sqrt(1 - (y2 + z2) / 2 + (y2 * z2) / 3);
+        float y = pointOnCube.y * Mathf.Sqrt(1 - (x2 + z2) / 2 + (x2 * z2) / 3);
+        float z = pointOnCube.z * Mathf.Sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
+        return new Vector3(x, y, z);
     }
 }
